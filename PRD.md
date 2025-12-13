@@ -5,7 +5,7 @@
 
 ## 1. Executive Summary
 
-**Product Name:** CloudThrottle (working title)
+**Product Name:** Throttler-Vision
 
 **Vision:** A sleek, web-native tool that helps developers and platform engineers understand, visualize, and plan around cloud service provider (CSP) API rate limits—before they hit them in production.
 
