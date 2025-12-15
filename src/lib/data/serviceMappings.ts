@@ -160,3 +160,20 @@ export function getServiceMapping(resourceType: string): ServiceMapping | undefi
 export function getDefaultRateLimit(apiService: string): number {
     return DEFAULT_RATE_LIMITS[apiService] ?? 600; // Default to 600 req/min
 }
+
+/**
+ * Get all mappings including custom ones (for client-side use).
+ * Custom mappings are loaded via API call.
+ */
+export function getAllBuiltInMappings(): ServiceMapping[] {
+    return GCP_SERVICE_MAPPINGS;
+}
+
+/**
+ * Find mapping by resource type, checking both built-in and custom.
+ */
+export function findMapping(resourceType: string, customMappings: ServiceMapping[] = []): ServiceMapping | undefined {
+    return GCP_SERVICE_MAPPINGS.find(m => m.resourceType === resourceType)
+        || customMappings.find(m => m.resourceType === resourceType);
+}
+

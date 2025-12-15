@@ -90,17 +90,18 @@ export function calculateBatchThroughput(inputs: BatchInput[]): BatchAssessmentS
         }
 
         const pageSize = mapping.defaultPageSize;
-        const projectMultiplier = input.projectCount ?? 1;
+        const projectCount = input.projectCount ?? 1;
 
-        // Calculate total API calls considering pagination
+        // Calculate API calls per project (parallel execution across projects)
         const callsPerProject = Math.ceil(input.count / pageSize);
-        const totalApiCalls = callsPerProject * projectMultiplier;
+        const totalApiCalls = callsPerProject * projectCount; // For display only
 
-        // Get rate limit (requests per minute)
+        // Get rate limit (requests per minute) - applies PER PROJECT
         const rateLimitPerMinute = getDefaultRateLimit(mapping.apiService);
 
-        // Calculate time to ingest
-        const timeToIngestMinutes = totalApiCalls / rateLimitPerMinute;
+        // PARALLEL: Time is based on SINGLE PROJECT (slowest path)
+        // Since rate limit is per-project, all projects run in parallel
+        const timeToIngestMinutes = callsPerProject / rateLimitPerMinute;
         const timeToIngestHours = timeToIngestMinutes / 60;
 
         // 24h window assessment
@@ -128,8 +129,8 @@ export function calculateBatchThroughput(inputs: BatchInput[]): BatchAssessmentS
         });
     }
 
-    // Calculate summary
-    const totalTimeHours = results.reduce((sum, r) => sum + r.timeToIngestHours, 0);
+    // Summary: Use MAX time (parallel) instead of SUM (sequential)
+    const totalTimeHours = results.length > 0 ? Math.max(...results.map(r => r.timeToIngestHours)) : 0;
     const allWithinWindow = results.every(r => r.withinWindow);
     const criticalCount = results.filter(r => r.status === 'critical').length;
     const warningCount = results.filter(r => r.status === 'warning').length;

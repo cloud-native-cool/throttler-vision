@@ -1,0 +1,11 @@
+[
+  {
+    "resourceType": "compute",
+    "displayName": "Compute Engine API",
+    "apiService": "compute.googleapis.com",
+    "apiOperation": "compute.list",
+    "defaultPageSize": 100,
+    "scope": "project",
+    "addedAt": "2025-12-15T06:52:07.088Z"
+  }
+]
